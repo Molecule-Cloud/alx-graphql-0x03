@@ -1,12 +1,13 @@
 import "@/styles/globals.css";
-import { ApolloProvider } from "@apollo/client";
+// import { ApolloProvider } from "@apollo/client";
 import type { AppProps } from "next/app";
-import client from "@/graphql/apolloClient";
+// import client from "@/graphql/apolloClient";
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <ApolloProvider client={client}>
-      <Component {...pageProps} />
-    </ApolloProvider>
+    <ErrorBoundary>
+        <Component {...pageProps} />
+    </ErrorBoundary>
   )
 }

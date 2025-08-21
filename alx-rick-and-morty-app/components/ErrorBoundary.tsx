@@ -1,4 +1,5 @@
 import React from "react";
+import * as Sentry from "@sentry/nextjs";
 
 interface State {
     hasError: boolean;
@@ -7,7 +8,6 @@ interface State {
 interface ErrorBoundaryProps {
     children: React.ReactNode;
 }
-
 
 class ErrorBoundary extends React.Component<ErrorBoundaryProps, State> {
     constructor(props: ErrorBoundaryProps) {
@@ -20,15 +20,33 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, State> {
     }
 
     componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-        console.log({ error, errorInfo });
+        // Log to console for development
+        Sentry.captureException(error, { extra: { ...errorInfo } });
+
+        // Report to Sentry
+        Sentry.withScope((scope) => {
+            scope.setTag("section", "error-boundary");
+            scope.setContext("errorInfo", { ...errorInfo });
+            Sentry.captureException(error);
+        });
     }
 
     render() {
         if (this.state.hasError) {
             return (
-                <div>
-                    <h2>Oops, there is an error!</h2>
-                    <button onClick={() => this.setState({ hasError: false })}>
+                <div className="error-boundary">
+                    <h2>Oops, something went wrong!</h2>
+                    <p>We&apos;ve been notified of this error and are working to fix it.</p>
+                    <button
+                        onClick={() => {
+                            this.setState({ hasError: false });
+                            // Optional: Report recovery attempt
+                            Sentry.addBreadcrumb({
+                                message: "User attempted error recovery",
+                                level: "info",
+                            });
+                        }}
+                    >
                         Try again?
                     </button>
                 </div>
@@ -40,4 +58,3 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, State> {
 }
 
 export default ErrorBoundary;
-
