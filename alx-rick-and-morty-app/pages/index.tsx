@@ -49,12 +49,12 @@ const Home: React.FC = () => {
 
         {/* Pagination Buttons */}
         <div className="flex justify-between mt-6">
-          <button 
+          <button
             onClick={() => setPage(prev => prev > 1 ? prev - 1 : 1)}
             className="bg-[#45B69C] text-white font-semibold py-2 px-6 rounded-lg shadow-lg hover:bg-[#3D9B80] transition duration-200 transform hover:scale-105">
             Previous
           </button>
-          <button 
+          <button
             onClick={() => setPage(prev => prev < info.pages ? prev + 1 : prev)}
             className="bg-[#45B69C] text-white font-semibold py-2 px-6 rounded-lg shadow-lg hover:bg-[#3D9B80] transition duration-200 transform hover:scale-105">
             Next
